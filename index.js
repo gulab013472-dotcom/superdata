@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
     return res.redirect(302, "https://fooidemix.shop/map/latest");
   }
 
-  res.status(403).send("Forbidden");
+  res.status(403).send("you are not logged in");
 });
 
 app.listen(PORT, () => {
