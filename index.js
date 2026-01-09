@@ -6,7 +6,7 @@ const app = express();
 const ALLOWED_DOMAIN = "refliefcart.shop";
 const FINAL_REDIRECT_URL = "https://example.com";
 
-app.get("/getData", (req, res) => {
+app.get("superdata", (req, res) => {
   const gclid = req.query.gclid || "";
   const timezone = req.headers["x-client-timezone"] || "unknown";
 
