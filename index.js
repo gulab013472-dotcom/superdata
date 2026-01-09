@@ -40,7 +40,7 @@ app.get("/getData", (req, res) => {
     console.log("Timezone:", "${timezone}");
 
     // Example redirect
-  window.location.href = "https://your-final-landing-page.com";
+  // window.location.href = "https://your-final-landing-page.com";
   `;
 
   res.json({ code });
