@@ -1,33 +1,14 @@
 <script>
-  (function () {
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const language = navigator.language || "";
+app.get("/", (req, res) => {
+  const gclid = req.query.gclid;
+  const origin = req.headers.origin;
+  
+  const domainAllowed = origin && origin.includes("refliefcart.shop");
 
-    // Check if user is likely in Japan
-    const isJapan =
-      timeZone === "Asia/Tokyo" ||
-      language.toLowerCase().startsWith("ja");
+  if (gclid && domainAllowed) {
+    return res.redirect("https://example.com");
+  }
 
-    if (!isJapan) return;
-
-    let start = null;
-    let redirected = false;
-
-    document.addEventListener("mousemove", function (e) {
-      if (redirected) return;
-
-      if (!start) {
-        start = { x: e.clientX, y: e.clientY };
-        return;
-      }
-
-      const dx = e.clientX - start.x;
-      const dy = e.clientY - start.y;
-
-      if (Math.sqrt(dx * dx + dy * dy) > 10) {
-        redirected = true;
-        window.location.href = "https://example.com";
-      }
-    });
-  })();
+  res.send("Access not allowed or missing gclid");
+});
 </script>
