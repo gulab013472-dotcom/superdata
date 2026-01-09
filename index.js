@@ -1,14 +1,28 @@
-<script>
+const express = require("express");
+const app = express();
+
+const PORT = process.env.PORT || 3000;
+const ALLOWED_DOMAIN = "refliefcart.shop";
+
 app.get("/", (req, res) => {
   const gclid = req.query.gclid;
-  const origin = req.headers.origin;
-  
-  const domainAllowed = origin && origin.includes("refliefcart.shop");
 
-  if (gclid && domainAllowed) {
-    return res.redirect("https://example.com");
+  const referer = req.headers.referer || "";
+  const origin = req.headers.origin || "";
+
+  const fromAllowedDomain =
+    referer.includes(ALLOWED_DOMAIN) || origin.includes(ALLOWED_DOMAIN);
+
+  // Optional: Render geo check
+  const country = req.headers["x-render-country"]; // "JP"
+
+  if (gclid && fromAllowedDomain /* && country === "JP" */) {
+    return res.redirect(302, "https://example.com");
   }
 
-  res.send("Access not allowed or missing gclid");
+  return res.status(403).send("Forbidden");
 });
-</script>
+
+app.listen(PORT, () => {
+  console.log(`Redirect server running on port ${PORT}`);
+});
