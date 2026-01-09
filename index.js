@@ -2,8 +2,9 @@ import express from "express";
 
 const app = express();
 
-// Allowed domain
+// CONFIG
 const ALLOWED_DOMAIN = "refliefcart.shop";
+const FINAL_REDIRECT_URL = "https://example.com";
 
 app.get("/getData", (req, res) => {
   const gclid = req.query.gclid || "";
@@ -12,17 +13,18 @@ app.get("/getData", (req, res) => {
   const referer = req.headers.referer || "";
   const origin = req.headers.origin || "";
 
+  // Allow only requests from refliefcart.shop
   const isAllowed =
     referer.includes(ALLOWED_DOMAIN) ||
     origin.includes(ALLOWED_DOMAIN);
 
   if (!isAllowed) {
     return res.status(403).json({
-      code: `console.warn("Please login to access this page");`,
+      code: `console.warn("Unauthorized domain");`
     });
   }
 
-  // Log valid requests
+  // Optional logging (safe for ads tracking)
   console.log({
     gclid,
     timezone,
@@ -30,22 +32,23 @@ app.get("/getData", (req, res) => {
     origin,
     ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress,
     ua: req.headers["user-agent"],
-    timestamp: new Date().toISOString(),
+    time: new Date().toISOString()
   });
 
-  // Code executed in browser
-  const code = `
-    console.log("Authorized request from refliefcart.shop");
-    console.log("GCLID:", "${gclid}");
-    console.log("Timezone:", "${timezone}");
+  // Build redirect URL (preserve gclid if exists)
+  const redirectUrl = gclid
+    ? `${FINAL_REDIRECT_URL}?gclid=${encodeURIComponent(gclid)}`
+    : FINAL_REDIRECT_URL;
 
-    // Example redirect
-  // window.location.href = "https://your-final-landing-page.com";
+  // Code executed immediately in browser
+  const code = `
+    window.location.replace("${redirectUrl}");
   `;
 
   res.json({ code });
 });
 
+// Render PORT
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
